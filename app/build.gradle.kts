@@ -60,8 +60,8 @@ dependencies {
     // Android (arm, arm64, x86 and x86_64)
 
     //noinspection GradleDependency  注释不提示更新
-    implementation("com.caoccao.javet:javet:3.1.0") // Linux and Windows (x86_64)
-
+    //implementation("com.caoccao.javet:javet:3.1.0") // Linux and Windows (x86_64)
+    implementation("com.caoccao.javet:javet-macos:3.1.2") // Mac OS (x86_64 and arm64)
     // 添加SLF4J API的依赖
     implementation ("org.slf4j:slf4j-api:2.0.12") // 使用最新版本
 

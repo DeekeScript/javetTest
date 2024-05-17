@@ -27,21 +27,13 @@ import java.util.List;
 import java.util.Objects;
 
 public class JavetUnitTest {
-    List<IV8Module> modules = new ArrayList<>();
+    List<V8Module> modules = new ArrayList<>();
 
     private void loadModules(V8Runtime v8Runtime) {
         IV8ModuleResolver iv8ModuleResolver = v8Runtime.getV8ModuleResolver();
         v8Runtime.setV8ModuleResolver((runtime, resourceName, v8ModuleReferrer) -> {
             System.out.println(":::" + resourceName);
             try {
-                if (Objects.equals(resourceName, ConsoleModule.NAME) || Objects.equals(resourceName, JavetModule.NAME) || Objects.equals(resourceName, TimersModule.NAME) || Objects.equals(resourceName, TimersPromisesModule.NAME)) {
-                    System.out.println("加载之前的逻辑");
-
-                    IV8Module v8Module = iv8ModuleResolver.resolve(runtime, resourceName, v8ModuleReferrer);
-                    modules.add(v8Module);
-                    return v8Module;
-                }
-
                 V8Module v8Module = runtime.getExecutor(getFileContent(resourceName)).setResourceName(resourceName).compileV8Module();
                 modules.add(v8Module);
                 return v8Module;
@@ -68,7 +60,7 @@ public class JavetUnitTest {
             v8Runtime.setConverter(javetProxyConverter);
 
             eventLoop = new JNEventLoop(v8Runtime);
-            eventLoop.loadStaticModules(JNModuleType.Console, JNModuleType.Timers);
+            eventLoop.loadStaticModules(JNModuleType.Console);
 
             loadModules(v8Runtime);
 
@@ -79,11 +71,6 @@ public class JavetUnitTest {
             assert v8Runtime != null;
             assert eventLoop != null;
             try {
-                for (IV8Module v8Module : this.modules) {
-                    v8Module.close();
-                    System.out.println("模块--");
-                }
-
                 eventLoop.unloadStaticModules(JNModuleType.Timers, JNModuleType.Console);
                 System.gc();
                 System.runFinalization();
